@@ -8,6 +8,11 @@ library(arrow)
 # Read the dataset
 nba_data <- read.csv("inputs/data/NBA_raw.csv")
 
+write_csv(
+  x = nba_data,
+  file = "inputs/data/NBA_raw.parquet"
+)
+
 # Filter rows and select specific columns
 cleaned_nba_data <- nba_data %>%
   filter(G >= 1229) %>%
