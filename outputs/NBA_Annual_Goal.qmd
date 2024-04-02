@@ -1,0 +1,185 @@
+---
+title: "The Impact of NBA Rule Changes and Improved Player Abilities on Increased Goal Numbers in Games."
+author: 
+  - Shiji Zhang
+thanks: "Code and data are available at: https://github.com/Northboi/Northboi-NBA_Annual_Goal"
+date: today
+date-format: long
+format: 
+  pdf:
+    documentclass: article
+    geometry: margin = 1.3in
+number-sections: true
+toc: TRUE
+---
+
+\newpage
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
+if(!require(readr)){install.packages('readr', dependencies = TRUE)}
+if(!require(arrow)){install.packages('arrow', dependencies = TRUE)}
+if(!require(ggplot2)){install.packages('ggplot2', dependencies = TRUE)}
+if(!require(tidyr)){install.packages('tidyr', dependencies = TRUE)}
+if(!require(modelsummary)){install.packages('modelsummary', dependencies = TRUE)}
+if(!require(rstanarm)){install.packages('rstanarm', dependencies = TRUE)}
+if(!require(knitr)){install.packages('knitr', dependencies = TRUE)}
+if(!require(broom)){install.packages('broom', dependencies = TRUE)}
+
+library(arrow)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(modelsummary)
+library(rstanarm)
+library(knitr)
+library(broom)
+```
+
+# Introduction
+
+# Data
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+nba_data <- read.csv("../inputs/data/NBA_raw.csv")
+
+# Filter rows and select specific columns
+cleaned_nba_data <- nba_data %>%
+  filter(G >= 1229) %>%
+  select(Season, FG, FGA, AST, FG_percent)
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(knitr)
+
+# Assuming 'cleaned_nba_data' is your dataset
+head_data <- cleaned_nba_data[1:5, ]  # Selecting first 5 rows
+
+# Print the table using kable
+kable(head_data)
+
+```
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+
+# Calculate ranks for each variable
+cleaned_nba_data <- mutate(cleaned_nba_data,
+                            Rank_FG = dense_rank(desc(FG)),
+                            Rank_FGA = dense_rank(desc(FGA)),
+                            Rank_AST = dense_rank(desc(AST)),
+                            Rank_FG_percent = dense_rank(desc(FG_percent)))
+
+# Sort the dataset by FG in descending order
+sorted_data <- cleaned_nba_data[order(-cleaned_nba_data$FG), ]
+
+# Select the top 5 seasons with the most FG and their ranks
+top_5_seasons <- sorted_data[1:5, c("Season", "FG", "Rank_FG", "FGA", "Rank_FGA", "AST", "Rank_AST", "FG_percent", "Rank_FG_percent")]
+
+# Print the table using kable
+kable(top_5_seasons)
+
+
+```
+
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+long_nba_data <- cleaned_nba_data %>%
+  gather(key = "Statistic", value = "Value", FG, FGA, AST)
+
+ggplot(long_nba_data, aes(x = Season, y = Value, fill = Statistic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "NBA Field Goals, Attempts, and Assists by Season",
+       x = "Season",
+       y = "Count",
+       fill = "Statistic") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(cleaned_nba_data, aes(x = Season, y = FG_percent, group = 1)) +
+  geom_line() + # Adds the line graph
+  geom_point() + # Optionally, add points to mark each data point
+  theme_minimal() + # Use a minimal theme for a clean look
+  labs(title = "Field Goal Percentage by Season",
+       x = "Season",
+       y = "Field Goal Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Improve label readability
+```
+# Model
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+# Fit the linear model using FG_percent to predict FG
+
+library(broom)
+library(knitr)
+
+# Assuming your model is already fitted
+# model <- lm(FG ~ FG_percent, data = cleaned_nba_data)
+model <- lm(FG ~ FG_percent, data = cleaned_nba_data)
+# Use `broom::tidy` to get a tidy summary
+tidy_summary <- tidy(model)
+
+# Now, use `kable` to create a Markdown table
+kable(tidy_summary, format = "markdown")
+
+
+```
+# Result
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(ggplot2)
+
+# Assuming cleaned_nba_data is your data frame
+# and it contains the columns FG_percent and FG
+
+# Create a scatter plot with a regression line
+ggplot(cleaned_nba_data, aes(x = FG_percent, y = FG)) +
+  geom_point(alpha = 0.5) +                           # Add scatter plot points
+  geom_smooth(method = "lm", se = FALSE, color = "black") + # Add regression line
+  theme_minimal() +                                   # Minimal theme
+  labs(x = "Field Goal Percentage (FG_percent)",
+       y = "Field Goals (FG)")
+
+```
+
+
+
+# Discussion
+
+\newpage
+
+# Reference
