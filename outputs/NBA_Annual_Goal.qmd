@@ -2,7 +2,7 @@
 title: "The Impact of NBA Rule Changes and Improved Player Abilities on Increased Goal Numbers in Games."
 author: 
   - Shiji Zhang
-thanks: "Code and data are available at: https://github.com/Northboi/Northboi-NBA_Annual_Goal"
+thanks: "Code and data are available at: https://github.com/Northboi/NBA_Annual_Goal"
 date: today
 date-format: long
 format: 
