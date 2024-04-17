@@ -1,16 +1,18 @@
 ---
-title: "The Impact of NBA Rule Changes and Improved Player Abilities on Increased Goal Numbers in Games."
+title: "The Impact of NBA Rule Changes and Improved Player Talents on Increased Goal Numbers in Games."
 author: 
   - Shiji Zhang
-thanks: "Code and data are available at: https://github.com/Northboi/NBA_Annual_Goal"
+thanks: "Code and data are available at: https://github.com/Northboi/NBA_Annual_Goal ; The shiny app si available at: https://wrpn7n-who0asked.shinyapps.io/shiny_app/"
 date: today
 date-format: long
+abstract: "As teams gradually adapt to the modifications in NBA game rules and the influx of talented players from around the world into the league, the total number of goals in each NBA season seems to be on the rise. In this report, we chose to study 16 seasons in NBA history with a total of 1229 or more games played. We used a Gaussian multiple linear regression model to examine the impact of field goal attempts, assists, and field goal percentage on the number of field goals. The study results indicate that increases in field goal attempts and assists have a greater impact on the increase in field goals compared to field goal percentage. This suggests that changes in game rules may bring more entertainment value to the game than the addition of more talented players to the NBA. NBA and other overseas leagues can focus on this conclusion to improve the entertainment value of their leagues and progress accordingly."
 format: 
   pdf:
     documentclass: article
-    geometry: margin = 1.3in
+    geometry: margin = 1.5in
 number-sections: true
 toc: TRUE
+bibliography: reference.bib
 ---
 
 \newpage
@@ -21,43 +23,112 @@ toc: TRUE
 #| message: false
 
 if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
-if(!require(readr)){install.packages('readr', dependencies = TRUE)}
-if(!require(arrow)){install.packages('arrow', dependencies = TRUE)}
 if(!require(ggplot2)){install.packages('ggplot2', dependencies = TRUE)}
 if(!require(tidyr)){install.packages('tidyr', dependencies = TRUE)}
-if(!require(modelsummary)){install.packages('modelsummary', dependencies = TRUE)}
 if(!require(rstanarm)){install.packages('rstanarm', dependencies = TRUE)}
 if(!require(knitr)){install.packages('knitr', dependencies = TRUE)}
-if(!require(broom)){install.packages('broom', dependencies = TRUE)}
+if(!require(kableExtra)){install.packages('kableExtra', dependencies = TRUE)}
+if(!require(brms)){install.packages('brms', dependencies = TRUE)}
 
-library(arrow)
-library(readr)
+
 library(dplyr)
 library(ggplot2)
 library(tidyr)
-library(modelsummary)
 library(rstanarm)
 library(knitr)
-library(broom)
+library(kableExtra)
+library(brms)
 ```
 
 # Introduction
 
+As the most exciting and competitive basketball league in the world, the NBA has always been loved by basketball fans worldwide [@cite1]. Over the past decade, the total number of goals scored in the NBA league has continued to increase annually, greatly enhancing the excitement of the games. This report focuses on studying the changes in the total number of goals scored in the NBA league each year after the modification of offensive and defensive rules in the 2004-05 season, which led teams to pursue a faster-paced offense[@cite2], as well as the other potential factors leading to these results. The results indicate that the rule changes in 2004 did indeed increase the number of goals scored annually. Additionally, the increasing talent of players over the past 20 years has also contributed to the increase in the total number of goals scored.
+
+In this report, the source of the dataset is first introduced. Due to the extensive use of abbreviations in the original dataset to represent each variable, I provided an overview of each variable in tabular form. The report also displays the overall league data for the most recent five seasons up to the present. In terms of season selection, only seasons with a total of 1229 or more games were considered for data reliability and fairness.The estimand of this report is Assists, Field Goals Attempts, and Field Goal percentage. The report visualizes the dynamic relationship between Assists, Field Goals, and Field Goal Attempts over the past 20 years through bar charts. Additionally, Field Goal Percentage is presented using a line graph to illustrate the improvement in player talent in recent years. Regarding the models, this report establishes a Gaussian multiple linear regression model using Field Goal Attempts, Assists, and Field Goal Percentage, and utilizes Gaussian distribution to study the impact of these variables on the total number of goals scored in the NBA league each year. Through analysis, the report finds that among all variables, Field Goal Attempts have the greatest impact on the total number of goals scored, while Field Goal Percentage has the smallest impact. In the results section, the report presents the relationship between these three variables and the total number of goals through Scatter Plots. It's observed that although the Field Goal Percentage plot shows greater dispersion, all three variables exhibit a positive relationship with Field Goals. This confirms that the increase in the total number of goals scored annually in the league is indeed related to rule changes and advancements in player talent in recent years.
+
+This report aims to analyze the reasons behind the recent increase in the total number of goals scored in the NBA league. It is hoped that this report can inspire basketball leagues worldwide. By making appropriate rule modifications and actively cultivating and recruiting players with higher talent, it is possible to increase the goal count in domestic basketball leagues, leading to enhanced entertainment value.
+
+
 # Data
+## Backgrounds
+
+The dataset used in this report is sourced from a website called Basketball Reference, which is part of Sports Reference. Basketball Reference is an authoritative and professional statistical website that specializes in tracking all major sports. The dataset used in this report provides overall NBA league data from the 1946-47 season to the 2023-24 season. It is updated daily after the conclusion of NBA games. In the original dataset, there are a total of 78 observations and 32 variables, representing 78 seasons and 32 overall league data statistics.
+
+After the data loading process, data cleaning was applied to the dataset. To ensure reliability and fairness of the results, this report only selected seasons with a game count greater than or equal to 1229 for analysis. Additionally, since this report aims to investigate the total number of goals per year in the NBA league after the rule change in the 2004-05 season, data prior to this season was not considered. Among the 20 seasons from 2004-05 to 2023-24, only 16 seasons met the requirements of this report. Four seasons were excluded: the 2011-12 season, the 2019-20 season, the 2020-21 season, and the ongoing 2023-24 season. These four seasons had insufficient game counts and significant discrepancies. The 2019-20 and 2020-21 seasons experienced a reduction in game count due to the pandemic. The ongoing 2023-24 season did not meet the desired game count as it is still in progress. The 2011-12 season was excluded due to labor issues related to player contracts, leading to a lengthy lockout lasting 149 days. Therefore, these four seasons will not be included in this report. After completing the data cleaning process, the cleaned dataset contains 16 observations and 5 variables, representing 16 seasons and 5 relevant overall league data statistics.
+
+The dataset used in this report is sourced from the Basketball Reference section of the Sports Reference website [@NBA], and the report was written with support from the R programming language [@citeR]. The writing process involved the use of the following packages: ggplot2[@rGgplot2], dplyr[@citedplyr], tidyr[@tidyr], rstanarm[@rstanarm], knitr[@citeknitr], kableExtra[@kableExtra], brms[@brms].
+
+## Variable
+
+In the cleaned dataset, there are a total of five variables.
+
+- Season: A string variable representing the NBA season when each overall league data statistic occurred.
+- Field Goals: Named 'FG' in the original dataset. An integer variable representing the total number of goals scored in the NBA league during a specified season.
+- Field Goal Attempts: Named 'FGA' in the original dataset. An integer variable representing the total number of field goal attempts made by players in the entire NBA league during a specified season.
+- Assist: Named 'AST' in the original dataset. An integer variable representing the total number of assists generated in the entire NBA league during a specified season. An assist is counted when one player passes the ball to another player, resulting in a score.
+- Field Goal percentage: Named 'FG_percent' in the original dataset. A decimal variable representing the ratio between field goals and field goal attempts. A higher Field Goal percentage indicates a higher shooting accuracy in the entire league during a specified season.
+
+The (@tbl-one) shows the description for every variable.
+
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 
+# Load necessary libraries
+library(dplyr)
+library(readr)
+
 nba_data <- read.csv("../inputs/data/NBA_raw.csv")
 
-# Filter rows and select specific columns
 cleaned_nba_data <- nba_data %>%
   filter(G >= 1229) %>%
-  select(Season, FG, FGA, AST, FG_percent)
+  select(Season, FG, FGA, AST, FG_percent) %>%
+  mutate(FG_percent = FG_percent * 100)
+
+
 ```
 
 ```{r}
+#| label: tbl-one
+#| tbl-cap: "Types and descriptions for variables."
+#| echo: false
+#| warning: false
+#| message: false
+
+library(knitr)
+library(kableExtra)
+
+# Define your table data
+table_data <- data.frame(
+  Column = c("Season", "Field Goals", "Field Goal Attempts", "Assist", "Field Goal percentage"),
+  Type = c("str", "num", "num", "num", "num"),
+  Description = c(
+    "Representing the NBA season when each overall league data statistic occurred.",
+    "Named 'FG' in the original dataset.Representing the total number of goals scored in the NBA league during a specified season.",
+    "Named 'FGA' in the original dataset. Representing the total number of field goal attempts made by players in the entire NBA league during a specified season.",
+    "Named 'AST' in the original dataset.Representing the total number of assists generated in the entire NBA league during a specified season. An assist is counted when one player passes the ball to another player, resulting in a score.",
+    "Named 'FG_percent' in the original dataset.Representing the ratio between field goals and field goal attempts. A higher Field Goal percentage indicates a higher shooting accuracy in the entire league during a specified season."
+  )
+)
+
+# Convert the data frame to a markdown table
+kable(table_data, booktabs = TRUE) %>%
+  kable_styling(full_width = FALSE, position = "center") %>%
+  column_spec(1, width = "5em") %>% 
+  column_spec(2, width = "2em") %>% 
+  column_spec(3, width = "33em")
+```
+## The impact of rule changes on field goals
+
+Since the NBA officially implemented rule changes in the 2004-05 season, including adding the defensive three-second rule and reducing the time for teams to advance past half-court from ten seconds to eight seconds, teams have gradually pursued and adapted to the fast-paced style of play brought about by these rule changes.[@cite2] The defensive three-second rule in the NBA prohibits players from standing in the paint area for more than three seconds without actively guarding an opponent. Before the implementation of this rule, some teams' big players could camp out under the basket on defense for entire defensive possessions. However, with this rule in place, every player on the team has to keep moving, which speeds up the pace of the game. It also makes it more likely for offensive players to drive to the basket for shots, as defenders cannot linger in the paint for extended periods.
+
+The (@tbl-two) displays the overall league data for the most recent five seasons with a total of over 1229 games played. It can be observed that the number of assists has been gradually increasing each year over the past five seasons. This indicates that NBA teams are increasingly emphasizing teamwork and ball movement rather than relying solely on individual star players to create scoring opportunities. More assists imply that NBA teams are incorporating more passing into their playing style.
+
+
+```{r}
+#| label: tbl-two
+#| tbl-cap: "Overall league data for the most recent five seasons with a total of over 1229 games played."
 #| echo: false
 #| warning: false
 #| message: false
@@ -66,58 +137,112 @@ library(knitr)
 
 # Assuming 'cleaned_nba_data' is your dataset
 head_data <- cleaned_nba_data[1:5, ]  # Selecting first 5 rows
+head_data_rename <- head_data %>%
+  rename(
+    `Field Goals` = FG,
+    `Field Goal Attempts` = FGA,
+    Assist = AST,
+    `FG Percentage` = FG_percent
+  )
 
 # Print the table using kable
-kable(head_data)
+kable(head_data_rename)
 
 ```
+
+However, the increasing number of assists alone may not entirely assure us that NBA games are speeding up. The (@fig-one) can dispel this concern. According to the bar chart shown in the (@fig-one), we can observe that not only does the red bar representing assists show an increasing trend over the past 16 seasons, but the blue bar representing total field goal attempts also exhibits a more pronounced upward trend. More assists and more field goal attempts indicate that the pace of NBA games has been accelerating over the past 16 seasons.
+
+In the 2004-05 season, the total number of assists in the entire league was around 52,000, while in the most recent concluded season, the 2022-23 season, the number of assists had increased to around 62,000, an increase of a whopping 10,000 assists. Additionally, in the 2004-05 season, the total field goal attempts in the entire league were only around 190,000, while in the 2022-23 season, this number had increased to around 210,000, an increase of approximately 20,000 attempts. It's worth reiterating that the total number of games and the duration of each game were the same for these two seasons. With the same number of games played, one season saw an increase of 10,000 assists and 20,000 field goal attempts compared to the other season. The changes in NBA offensive and defensive rules have indeed had a positive impact, accelerating the pace of the game.To better observe and compare the situations of Field goal, Field goal attempts, assists, and field goal percentage across different seasons, I created a Shiny app containing interactive tables and graphs to facilitate this.In this Shiny app, you can select one or more seasons to observe specific data. Here is the link to the Shiny app:
+[https://wrpn7n-who0asked.shinyapps.io/shiny_app/]
+
 ```{r}
+#| label: fig-one
+#| fig-cap: "NBA Field Goals, Attempts, and Assists by Season"
 #| echo: false
 #| warning: false
 #| message: false
 
 library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Assuming 'cleaned_nba_data' is your original dataframe
+long_nba_data <- cleaned_nba_data %>%
+  gather(key = "Statistic", value = "Value", FG, FGA, AST) %>%
+  mutate(Statistic = factor(Statistic,
+                            levels = c("AST", "FG", "FGA"),
+                            labels = c("Assists", "Field Goal", "Field Goal Attempts")))
+
+# Creating the plot with the renamed variables
+p <- ggplot(long_nba_data, aes(x = Season, y = Value, fill = Statistic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(x = "Season",
+       y = "Count",
+       fill = "Statistic") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels to avoid overlap
+
+# Print the plot
+print(p)
+
+
+```
+According to the analysis above, we understand that after the NBA league modified its rules, the trends of goals scored, field goal attempts, and assists have all been on the rise over the past 16 seasons with more than 1229 games played. However, the overall trend does not necessarily mean that more field goal attempts and assists will result in more goals scored. This can be explained by referring to the (@tbl-new).In the table, the top five seasons with the highest total goals scored are selected. For these seasons, rankings are provided for the NBA league's total field goals, field goal attempts, assists, and field goal percentage. This allows for a clear understanding of the rankings of these seasons in terms of other data over the 16 seasons.
+
+Firstly, it can be observed that in the top five seasons with the highest total goals scored, their other data also mostly rank within the top five. The only exception is the 2016-17 season, where the field goal percentage ranks sixth. As for the seasons ranking third and fourth in total goals scored, the 2017-18 season and the 2016-17 season respectively, they both achieved fourth and fifth rankings in field goal attempts and assists. Additionally, the top three seasons in total goals scored also maintain top three rankings in field goal attempts and assists. This indicates a correlation between field goals, field goal attempts, and assists. Based on the (@tbl-new), the conclusion can be drawn that when there are more assists and field goal attempts, there is a likelihood of more field goals being scored.Due to the 2016-17 season ranking sixth in field goal percentage, falling out of the top five, it seems to suggest that the impact of field goal percentage on field goals may not be as significant as the impact of field goal attempts and assists on field goals.
+```{r}
+#| label: tbl-new
+#| tbl-cap: "The top five seasons with the most field goals with the rank."
+#| echo: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(knitr)
 
 # Calculate ranks for each variable
-cleaned_nba_data <- mutate(cleaned_nba_data,
+cleaned_nba_rank <- mutate(cleaned_nba_data,
                             Rank_FG = dense_rank(desc(FG)),
                             Rank_FGA = dense_rank(desc(FGA)),
                             Rank_AST = dense_rank(desc(AST)),
                             Rank_FG_percent = dense_rank(desc(FG_percent)))
 
 # Sort the dataset by FG in descending order
-sorted_data <- cleaned_nba_data[order(-cleaned_nba_data$FG), ]
+sorted_data <- cleaned_nba_rank[order(-cleaned_nba_rank$FG), ]
 
 # Select the top 5 seasons with the most FG and their ranks
 top_5_seasons <- sorted_data[1:5, c("Season", "FG", "Rank_FG", "FGA", "Rank_FGA", "AST", "Rank_AST", "FG_percent", "Rank_FG_percent")]
 
+# Your existing code for calculating ranks and sorting data goes here...
+
+# Rename the columns
+top_5_seasons_renamed <- top_5_seasons %>%
+  rename(
+    `Rank (FG)` = Rank_FG,
+    `Field Goals` = FG,
+    `Rank (FGA)` = Rank_FGA,
+    `Field Goal Attempts` = FGA,
+    `Rank (AST)` = Rank_AST,
+    Assist = AST,
+    `FG Percentage` = FG_percent,
+    `Rank (FG%)` = Rank_FG_percent
+  )
+
+# Now only one 'Rank' column will be shown, assuming the ranks for FG, FGA, AST, FG% are all the same.
+# If they are different, you'll need to keep them separate or decide how to combine them.
+
 # Print the table using kable
-kable(top_5_seasons)
-
-
-```
-
-
-
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-
-long_nba_data <- cleaned_nba_data %>%
-  gather(key = "Statistic", value = "Value", FG, FGA, AST)
-
-ggplot(long_nba_data, aes(x = Season, y = Value, fill = Statistic)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "NBA Field Goals, Attempts, and Assists by Season",
-       x = "Season",
-       y = "Count",
-       fill = "Statistic") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+kable(top_5_seasons_renamed, row.names = FALSE)
 
 ```
+## The impact of players' talent on field goals
+
+Not only rule changes, but also changes in player talent are potential factors affecting the total number of goals scored in the NBA each season. In recent years, an increasing number of overseas players have entered the NBA draft, and more talented players are willing to join the NBA stage[@cite3]. This has led to the NBA having more and more highly talented players, a trend that has become increasingly evident since around 2014. The (@fig-four) illustrates the changes in the league's field goal percentage over the past 16 regular seasons. It can be observed that the overall field goal percentage in the NBA was at its lowest in the 2004-05 season. From then until the 2009-10 season, the league's field goal percentage showed an almost consistent yearly increase. However, starting from the 2009-10 season until the 2014-15 season, the NBA's field goal percentage experienced a downward trend almost every year. 
+
+With the increasing number of high-quality talent players from both domestic and international sources joining the NBA[@cite3], from the 2014-15 season until the recently concluded 2022-23 season, the NBA's field goal percentage has been steadily increasing year by year. It is worth mentioning that there was a significant increase in field goal percentage in the 2022-23 season, rising from 46.1% in the 2021-22 season to 47.5% in the 2022-23 season. This means that for every additional 100 shots taken, the 2022-23 season would produce approximately 1.4 more goals. While this may not seem like a substantial change, in reality, the magnitude of change is almost equivalent to the difference in field goal percentage between the 2021-22 season and the 2004-05 season. Combining the information from the above (@tbl-new), it can be observed that higher player talent resulting in higher field goal percentages has led to more field goals and improved entertainment value of the games.
 ```{r}
+#| label: fig-four
+#| fig-cap: "Field Goal Percentage by Season"
 #| echo: false
 #| warning: false
 #| message: false
@@ -126,60 +251,180 @@ ggplot(cleaned_nba_data, aes(x = Season, y = FG_percent, group = 1)) +
   geom_line() + # Adds the line graph
   geom_point() + # Optionally, add points to mark each data point
   theme_minimal() + # Use a minimal theme for a clean look
-  labs(title = "Field Goal Percentage by Season",
-       x = "Season",
+  labs(x = "Season",
        y = "Field Goal Percentage (%)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Improve label readability
 ```
 # Model
+## Model choice
+
+During the initial stages of selecting a model for this report, we initially intended to use simple linear regression to study the impact of assists on the total goals scored in the NBA league over the past 16 seasons. The reason for initially choosing assists is because this data is influenced by both changes in NBA rules and improvements in player talent. However, we ultimately chose to use a Gaussian model for multiple linear regression analysis. The limitations of simple linear regression cannot be ignored. Firstly, simple linear regression can only handle one independent variable. Focusing solely on the impact of assists on total goals scored would be too simplistic. Secondly, simple linear regression is very sensitive to outliers[@cite5]. When using a linear regression model, several large outliers and outliers can greatly affect the slope and intercept of the simple linear regression model, which may affect the overall predictive accuracy of the model. Additionally, simple linear regression models also assume homoscedasticity[@cite5]. When the variance changes with x in actual data, heteroscedasticity occurs, the estimates of simple linear regression will become inaccurate.
+
+Then, we decided to use the Gaussian multiple linear regression model. Firstly, it can handle multiple independent variables. When considering the total goals scored in an NBA season, it is not only influenced by a single independent variable but by multiple variables. Secondly, this model can handle nonlinear relationships[@cite4]. In NBA games, if only the relationship between assists and goals scored is considered, it would be linear because one assist always results in one goal. However, when considering the impact of assists, field goal attempts, and field goal percentage on goals scored, this nonlinear relationship needs to be addressed using the Gaussian multiple linear regression model. Another benefit is that this model allows us to avoid guessing the form of the model before modeling[@cite4]. By using code to build the Gaussian multiple linear regression model, the model can automatically find the most appropriate relationships between the data. Therefore, we ultimately decided to use the Gaussian multiple linear regression model to analyze how field goal attempts, assists, and field goal percentage influence total goals scored.
+
+
+## Model set-up
+
+Through the data analysis in this report, we found correlations between the number of goals, shot attempts, assists, and shooting accuracy in each season of the NBA league. To further investigate the relationship between these variables, we established the following Gaussian multiple linear regression model for estimation.
+
+\begin{align}
+y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + \beta_1 \times \mbox{Attempts}_i + \beta_2 \times \mbox{Assists}_i + \beta_3 \times \mbox{Accuracy}_i \\
+\beta_0 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_1 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_2 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_3 &\sim \mbox{Normal}(0, 2.5) \\
+\sigma &\sim \mbox{Cauchy}(0, 2.5)
+\end{align}
+
+Where $y_i$ represents the total number of goals produced in season $i$ in the NBA league. $Attempts_i$ represents the total field goal attempts produced in the season $i$ in the NBA.$Assist_i$ represents the total number of assists produced in the season $i$ in the NBA. $Accuracy_i$ represents the overall field goal percentage in the NBA league for season $i$.
+
+$\beta_{0}$ represents the coefficient for the intercept. $\beta_{1}$ represents the rate of change in the total number of goals in the league when the total number of shot attempts increases by one in season $i$ in the NBA. $\beta_{2}$ represents the rate of change in the total number of goals in the league when the total number of assists increases by one in season $i$ in the NBA. $\beta_{3}$ represents the rate of change in the total number of goals in the league when the overall shooting percentage of the NBA increases by 1% in season $i$.
+
+## Model justification
+
+One point worth mentioning regarding the establishment of this Gaussian multiple linear regression model is about sigma, which represents the error term. We chose to model it following the Cauchy distribution. The reason for applying the Cauchy distribution is that it can more readily accept the occurrence of strange and unpredictable events. We believe this aligns well with the context of sports games like the NBA. In the NBA, there may indeed be a relatively weak team that suddenly performs exceptionally well in a season. Therefore, if we only use statistics such as assists, field goal attempts, and field goal percentages to explain the total number of goals in the NBA league, it may not be sufficient. Hence, by using the Cauchy distribution, we can better handle these exceptional and rare events in our model.
+
+# Result
+## Model coefficient
+
+After establishing the Gaussian multiple linear regression model and summarizing the results, we obtained the (@tbl-four). In this table, we can observe some data that align with our expectations and previous conclusions. In the "estimate" column, we see that Field goal attempts, assists, and Field goal percentage are all positive values, but they vary in magnitude. The estimate for FGA is 0.21, indicating that according to our Gaussian multiple linear regression model, we estimate that when the NBA league generates one additional Field goal attempt, the total goals in the league will increase by approximately 0.2. The estimate for Ast is 0.14, suggesting that our model predicts that when one new assist is produced in the NBA league, approximately 0.14 new field goals will be generated. The estimate for field goal percentage is only 0.01, indicating that the model estimates that when the shooting percentage in the NBA league increases by 1%, approximately 0.01 new goals will be generated in the league.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
+#| results: hide
 
-# Fit the linear model using FG_percent to predict FG
+library(rstanarm)
 
-library(broom)
+nba_model <-
+  stan_glm(
+    formula = FG ~ FGA + AST + FG_percent,
+    data = cleaned_nba_data,
+    family = gaussian(),
+    prior = normal(location = 0, scale = 2.5),
+    prior_intercept = normal(location = 0, scale = 2.5),
+    prior_aux = cauchy(0, 2.5),  # Set a Cauchy prior for demonstration; adjust as needed
+    seed = 900
+  )
+
+saveRDS(
+  nba_model,
+  file = "../model/Gaussian_multiple_linear_regression_model.rds"
+)
+
+```
+
+
+```{r}
+#| label: tbl-four
+#| tbl-cap: "Summary of Model Coeﬀicients"
+#| echo: false
+#| warning: false
+#| message: false
+
+library(rstanarm)
 library(knitr)
+library(kableExtra)
+library(brms)
 
-# Assuming your model is already fitted
-# model <- lm(FG ~ FG_percent, data = cleaned_nba_data)
-model <- lm(FG ~ FG_percent, data = cleaned_nba_data)
-# Use `broom::tidy` to get a tidy summary
-tidy_summary <- tidy(model)
+# Assuming your stan_glm model is stored in nba_model
 
-# Now, use `kable` to create a Markdown table
-kable(tidy_summary, format = "markdown")
+# Extracting the summary of the posterior distribution for the coefficients
+posterior_summary_df <- as.data.frame(posterior_summary(nba_model))
+
+# Rename the columns appropriately
+colnames(posterior_summary_df) <- c("Estimate", "Est.Error", "Q2.5", "Q97.5")
+
+# Remove the Est.Error column
+posterior_summary_df <- posterior_summary_df[, -2]
+
+# Now use kable to create a table suitable for PDF output without Est.Error column
+kable_styled <- kable(posterior_summary_df, digits = 2, format = "latex", booktabs = TRUE) %>%
+  kable_styling(font_size = 10)
+
+# To ensure the table is rendered in your R Markdown PDF output, just include kable_styled in an R chunk.
+kable_styled
 
 
 ```
-# Result
+If we rank these three variables based on the magnitude of their estimates, we find that FGA is greater than AST, which is greater than FG percent. This means that according to the model predictions, Field goal attempts are most likely to influence the number of Field goals among these three variables, while Field goal percentage has the least impact. This is consistent with our conclusion in (@tbl-new). In that table, since the field goal percentage for the 2016-17 season ranked sixth among the 16 seasons studied in this report and was the only one to fall out of the top five, we concluded that Field goal percentage had a lesser impact on the number of field goals compared to field goal attempts and assists. Now, in the (@tbl-four), our model's predictions successfully confirm this point.
+
+However, the unpredictability of sports games is also reflected in the (@tbl-four). We can see this in the columns representing the 95% confidence intervals, namely Q2.5 and Q97.5. In the four rows for the intercept, FGA, AST, and FG percent, the 95% confidence intervals are almost symmetric about 0 and simultaneously include 0. This indicates that there is considerable uncertainty about the true impact of FGA, AST, and FG percent on Field goals. This uncertainty indeed mirrors the reality of NBA games. While we can establish that these three variables are positively correlated with Field goals, the extent to which the third variable (FG percent) affects the number of Field goals is uncertain due to the inherent unpredictability in NBA games. We believe this uncertainty aligns with the unpredictability of sports. The instability of athletes' performance and the occurrence of unexpected events, coupled with other unquantified factors, may contribute to the model's seeming lack of precision.
+
+
+## The impact of Filed Goal Attempts, Assists, Field Goal Percentages on Field goals
+
+To further determine the impact of filed goal attempts, assists, and field goal percentages on FG, we utilized scatter plots from the (@fig-five) to display the relationships between these three variables and FG. Firstly, it can be observed that in the three scattered plots of the (@fig-five), all three trend lines have upward slopes. This indicates that increasing filed goal attempts, Assists, and higher field goal percentages indeed result in more FG.
+
+In the left plot of the (@fig-five), we can see that most plots are concentrated with assist numbers below 55,000. This suggests that among the 16 seasons studied in this report, only a few seasons had assists exceeding 55,000. Additionally, we can observe that when the number of assists is around 52,500, if we draw a vertical line at this point, we can find three plots representing different field goals on this vertical line, and their differences are not small. This demonstrates the dispersion of plots in the scatter plot of assists and field goals, and it also proves that in a certain NBA season, having more field goals does not necessarily mean having more assists.
 
 ```{r}
+#| label: fig-five
+#| fig-cap: "Scatter plots of Field Goal against Field Goal Attempts, Assists, and Field Goal Percentage"
 #| echo: false
 #| warning: false
 #| message: false
-
+library(dplyr)
+library(tidyr)
 library(ggplot2)
 
-# Assuming cleaned_nba_data is your data frame
-# and it contains the columns FG_percent and FG
+# Assuming 'cleaned_nba_data' is your original dataframe
+nba_long <- cleaned_nba_data %>%
+  gather(key = "variable", value = "value", AST, FG_percent, FGA) %>%
+  mutate(variable = factor(variable, levels = c("AST", "FG_percent", "FGA"),
+                           labels = c("Assists", "Field Goal Percentage", "Field Goal Attempts")))
 
-# Create a scatter plot with a regression line
-ggplot(cleaned_nba_data, aes(x = FG_percent, y = FG)) +
-  geom_point(alpha = 0.5) +                           # Add scatter plot points
-  geom_smooth(method = "lm", se = FALSE, color = "black") + # Add regression line
-  theme_minimal() +                                   # Minimal theme
-  labs(x = "Field Goal Percentage (FG_percent)",
+# Creating the plot with specified order of variable names
+p <- ggplot(nba_long, aes(x = value, y = FG)) +
+  geom_point(alpha = 0.5) +
+  facet_wrap(~variable, scales = 'free_x') +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +  # Rotate x-axis labels to avoid overlap
+  labs(x = "Value",
        y = "Field Goals (FG)")
 
-```
+# Print the plot
+print(p)
 
+
+
+```
+In the scatter plot depicting the relationship between Field Goal Percentage and Field Goals located in the middle, we can observe that compared to the relationship between assists and field goals, the dispersion of plots in this scatter plot is even greater. The distance between each plot and the trend line is larger than in the assist plot. Additionally, we can see that almost all plots are clustered below a field goal percentages value of 46.25. The only outlier is a plot with a field goal percentages of 47.5.
+
+In the scatter plot on the right, depicting the relationship between filed goal attempts and Field Goals , we can observe that overall, the plots are more closely aligned with the trend line compared to the previous two scatter plots. The only outlier may be the plot corresponding to filed goal attempts of approximately 217,500. However, overall, in this scatter plot of filed goal attempts and field goals, the dispersion of plots is minimal.
+
+Overall, in a scatter plot, when the dispersion of data points around the trend line is greater, it indicates that the variance in the relationship between the two variables in the plot is higher, and therefore, predictability is poorer. Based on our analysis of the three scatter plots, if we were to rank the influence of assists, field goal percentages, and filed goal attempts on field goals, it would be filed goal attempts > assists > field goal percentages. This is because the dispersion of data points in the scatter plot for filed goal attempts is the smallest, while the dispersion of data points in the scatter plot for field goal percentages is the largest. Therefore, in an NBA season, more filed goal attempts is more likely to lead to more field goals.
 
 
 # Discussion
+## Findings
 
+After visualizing and modeling the three potential factors influencing the number of goals per season in the NBA—Field goal attempts, assists, and Field goal percentage—we discovered that since the 2004-05 season, the NBA has modified both offensive and defensive rules. As each team continuously adapts to these new rules, and with an increasing number of talented players from both domestic and international sources joining the NBA in recent years, the number of goals per season has shown an upward trend. This increase can be attributed to factors such as the introduction of the NBA defensive three-second rule and a reduction in the time allowed for midcourt ball possession, resulting in a faster pace of NBA games. This acceleration has led to an increase in both Field goal attempts and assists over the past 16 seasons, particularly in seasons where 1,229 games or more were played.
+
+Furthermore, the influx of talented players has contributed to a rising trend in Field goal percentage over the past 16 seasons, especially evident in the 2022-23 season, where the Field goal percentage increased from 46.1% in the 2021-22 season to 47.5%.
+
+To further explore which of these factors—changes in NBA game rules or the influx of talented players—contributed more to the increasing trend in the number of goals per season, we employed a Gaussian multiple linear regression model to model how Field goal attempts, assists, and Field goal percentage affect the number of field goals.
+
+Upon establishing the model, we found that in terms of coefficients, Field goal attempts had the greatest impact, followed by assists, and then Field goal percentage. To verify the accuracy of the model, we utilized scatter plots to visualize the relationships between each of these three variables and the number of field goals. Ultimately, we discovered that Field goal attempts had the least scattered data points in the scatter plots, indicating that Field goal attempts are most likely to influence the number of NBA goals per season. On the other hand, Field goal percentage had the most dispersed data points in the scatter plots, suggesting that its impact on the number of field goals is the least significant. The influence of assists lies between these two variables.
+
+In conclusion, while both changes in NBA game rules and the influx of talented players have contributed to an increase in field goals per season, the changes in game rules have had a greater impact on the number of goals scored, making it the primary factor driving the observed results.
+
+## Suggestions for the basketball association around the world
+
+Given the findings above, we hope to propose some suggestions for the NBA and other overseas leagues on how to improve the entertainment value of the games. Firstly, for the NBA, it should continue to prioritize teamwork and the smooth flow of the game to maximize the number of assists and shot attempts. The NBA could consider providing additional rewards for the assists leader of each season or offering them more media exposure to enhance the pace and appeal of the games. Another way to enhance the pace of the game is to minimize the duration of timeouts. Timeouts disrupt the rhythm of both teams[@cite6], and nowadays, the 75-second timeouts in the NBA may interrupt players' shooting rhythm. After a timeout, players may not be able to continue their hot streak from before, potentially leading to a decrease in the number of field goals and assists.
+
+For those leagues outside the NBA, we believe our findings can also help them improve the entertainment value of their games in the future. The NBA attracts talented players from around the world due to its excellent reputation and status as the most competitive basketball league globally[@cite1]. While it may not be easy for other basketball leagues worldwide to consistently attract talented players from all corners of the globe like the NBA does, it doesn't mean they can't enhance the entertainment value of their games.
+
+Based on our conclusion that modifying game rules can increase the number of goals scored, we believe overseas leagues can accelerate the pace of the game and increase the number of goals by adjusting their rules, even if they can't attract as many talented players. This would elevate the excitement of the games. Additionally, these leagues can implement reward mechanisms to incentivize players to create more assists or take more shots. This can also contribute to an increase in the number of goals scored, thereby enhancing the entertainment value of the games.
+
+## Drawbacks
+
+It's undeniable that there are still areas for improvement in the statistical design presented in this report. Firstly, despite the NBA having developed for only 16 seasons with over 1229 games played each season, from a statistical standpoint, 16 observations may not be considered a large sample size. Therefore, in order to obtain more reliable and accurate results, a larger sample size may be needed to support the authenticity and reliability of the findings.
+
+Additionally, in terms of model selection, one of the assumptions of the Gaussian multiple linear regression model is the linear assumption, which assumes that the relationship between the independent variables and the dependent variable is linear. In this report, the independent variables are assists, Field goal attempts, and field goal percentage, while the dependent variable is Field goal numbers. However, in sports statistical data, the relationship between shot attempts, shooting accuracy, and the total number of goals scored cannot be guaranteed to be linear. Therefore, this may lead to inaccuracies in the estimation results of the model.
 \newpage
 
 # Reference

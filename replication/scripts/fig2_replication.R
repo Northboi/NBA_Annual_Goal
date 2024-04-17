@@ -1,6 +1,8 @@
 if(!require(ggplot2)){install.packages('ggplot2', dependencies = TRUE)}
 library(ggplot2)
 
+cleaned_nba_data <- read.csv("inputs/data/cleaned_nba_data.csv")
+
 ggplot(cleaned_nba_data, aes(x = Season, y = FG_percent, group = 1)) +
   geom_line() + # Adds the line graph
   geom_point() + # Optionally, add points to mark each data point
@@ -17,3 +19,4 @@ ggsave(
   units = "in",
   dpi = 300
 )
+

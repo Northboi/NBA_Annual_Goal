@@ -1,0 +1,12 @@
+name: shiny
+title: shiny
+username: wrpn7n-who0asked
+account: wrpn7n-who0asked
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11782550
+bundleId: 8504463
+url: https://wrpn7n-who0asked.shinyapps.io/shiny/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

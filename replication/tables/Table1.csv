@@ -1,6 +1,6 @@
-"Season","FG","FGA","AST","FG_percent","Rank_FG","Rank_FGA","Rank_AST","Rank_FG_percent"
-"2022~23",103260,217219,62279,0.475,1,2,1,1
-"2021~22",99930,216722,60636,0.461,3,3,2,2
-"2018~19",101062,219458,60483,0.461,2,1,3,2
-"2017~18",97435,211709,57163,0.46,4,4,4,3
-"2016~17",96061,210115,55660,0.457,5,5,5,6
+"Column","Type","Description"
+"Season","str","Representing the NBA season when each overall league data statistic occurred."
+"Field Goals","num","Named 'FG' in the original dataset.Representing the total number of goals scored in the NBA league during a specified season."
+"Field Goal Attempts","num","Named 'FGA' in the original dataset. Representing the total number of field goal attempts made by players in the entire NBA league during a specified season."
+"Assist","num","Named 'AST' in the original dataset.Representing the total number of assists generated in the entire NBA league during a specified season. An assist is counted when one player passes the ball to another player, resulting in a score."
+"Field Goal percentage","num","Named 'FG_percent' in the original dataset.Representing the ratio between field goals and field goal attempts. A higher Field Goal percentage indicates a higher shooting accuracy in the entire league during a specified season."

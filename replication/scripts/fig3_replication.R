@@ -1,13 +1,28 @@
+if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
+if(!require(tidyr)){install.packages('tidyr', dependencies = TRUE)}
 if(!require(ggplot2)){install.packages('ggplot2', dependencies = TRUE)}
+library(dplyr)
+library(tidyr)
 library(ggplot2)
 
-# Create a scatter plot with a regression line
-ggplot(cleaned_nba_data, aes(x = FG_percent, y = FG)) +
-  geom_point(alpha = 0.5) +                           # Add scatter plot points
-  geom_smooth(method = "lm", se = FALSE, color = "black") + # Add regression line
-  theme_minimal() +                                   # Minimal theme
-  labs(x = "Field Goal Percentage (FG_percent)",
+cleaned_nba_data <- read.csv("inputs/data/cleaned_nba_data.csv")
+nba_long <- cleaned_nba_data %>%
+  gather(key = "variable", value = "value", AST, FG_percent, FGA) %>%
+  mutate(variable = factor(variable, levels = c("AST", "FG_percent", "FGA"),
+                           labels = c("Assists", "Field Goal Percentage", "Field Goal Attempts")))
+
+# Creating the plot with specified order of variable names
+p <- ggplot(nba_long, aes(x = value, y = FG)) +
+  geom_point(alpha = 0.5) +
+  facet_wrap(~variable, scales = 'free_x') +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +  # Rotate x-axis labels to avoid overlap
+  labs(x = "Value",
        y = "Field Goals (FG)")
+
+# Print the plot
+print(p)
 
 
 ggsave(

@@ -16,12 +16,17 @@ write_csv(
 # Filter rows and select specific columns
 cleaned_nba_data <- nba_data %>%
   filter(G >= 1229) %>%
-  select(Season, FG, FGA, AST, FG_percent)
+  select(Season, FG, FGA, AST, FG_percent) %>%
+  mutate(FG_percent = FG_percent * 100)
 
 # Write the cleaned data to a CSV file
 write_csv(
   x = cleaned_nba_data,
   file = "inputs/data/cleaned_nba_data.csv"
+)
+write_csv(
+  x = cleaned_nba_data,
+  file = "shiny/cleaned_nba_data.csv"
 )
 
 write_parquet(x = nba_data,

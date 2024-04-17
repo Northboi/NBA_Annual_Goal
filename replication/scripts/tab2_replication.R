@@ -1,22 +1,20 @@
-if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
-library(dplyr)
+if(!require(knitr)){install.packages('knitr', dependencies = TRUE)}
+library(knitr)
 
-# Calculate ranks for each variable
-cleaned_nba_data <- mutate(cleaned_nba_data,
-                           Rank_FG = dense_rank(desc(FG)),
-                           Rank_FGA = dense_rank(desc(FGA)),
-                           Rank_AST = dense_rank(desc(AST)),
-                           Rank_FG_percent = dense_rank(desc(FG_percent)))
+cleaned_nba_data <- read.csv("inputs/data/cleaned_nba_data.csv")
 
-# Sort the dataset by FG in descending order
-sorted_data <- cleaned_nba_data[order(-cleaned_nba_data$FG), ]
-
-# Select the top 5 seasons with the most FG and their ranks
-top_5_seasons <- sorted_data[1:5, c("Season", "FG", "Rank_FG", "FGA", "Rank_FGA", "AST", "Rank_AST", "FG_percent", "Rank_FG_percent")]
+head_data <- cleaned_nba_data[1:5, ]  # Selecting first 5 rows
+head_data_rename <- head_data %>%
+  rename(
+    `Field Goals` = FG,
+    `Field Goal Attempts` = FGA,
+    Assist = AST,
+    `FG Percentage` = FG_percent
+  )
 
 # Print the table using kable
-kable(top_5_seasons)
+kable(head_data_rename)
 
 file_path <- "replication/tables/Table2.csv"
-write.csv(top_5_seasons, file_path, row.names = FALSE)
+write.csv(head_data, file_path, row.names = FALSE)
 

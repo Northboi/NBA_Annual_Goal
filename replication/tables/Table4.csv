@@ -1,0 +1,18 @@
+"x"
+"\begin{table}
+\centering
+\caption{Posterior Summary of Model Coefficients}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{lrrrr}
+\toprule
+  & Estimate & Est.Error & Q2.5 & Q97.5\\
+\midrule
+(Intercept) & -49976.05 & 396470.10 & -825764.48 & 724072.95\\
+FGA & 0.21 & 1.98 & -3.61 & 4.17\\
+AST & 0.14 & 2.34 & -4.50 & 4.79\\
+FG\_percent & 0.01 & 2.54 & -5.00 & 4.92\\
+sigma & 96502.18 & 17665.76 & 69842.36 & 137477.79\\
+\bottomrule
+\end{tabular}
+\end{table}"

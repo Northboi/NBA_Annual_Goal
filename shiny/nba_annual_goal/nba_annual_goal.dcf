@@ -1,0 +1,12 @@
+name: nba_annual_goal
+title: nba_annual_goal
+username: wrpn7n-who0asked
+account: wrpn7n-who0asked
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11755888
+bundleId: 8493626
+url: https://wrpn7n-who0asked.shinyapps.io/nba_annual_goal/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
