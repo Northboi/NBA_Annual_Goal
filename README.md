@@ -57,7 +57,7 @@ replication
 Shiny
 
 - app.R - The code for the shiny application (Interactive table and graph)
-- cleaned_nba_data.csv - the dataset for the shiny application
+- cleaned_nba_data.csv - the dataset for the shiny application.
 - nba_annual_goal 
   - nba_annual_goal.dcf
 - rsconnect
