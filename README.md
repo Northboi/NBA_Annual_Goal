@@ -71,7 +71,7 @@ Most of the code in the paper and in R markdown is written by ChatGPT. And all c
 
 ## Reproducibility
 
-Download all files and open the R project NBA_Annual_Goal.Rproj in R Studio.
+Download all files and open the R project project.Rproj in R Studio.
 
 To reproduce the paper, render to pdf NBA_Annual_Goal.qmd found at outputs/NBA_Annual_Goal.qmd.
 

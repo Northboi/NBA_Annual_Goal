@@ -1,3 +1,11 @@
+#### Preamble ####
+# Purpose: Table 1 replication
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
+
+#### Workspace setup ####
 library(knitr)
 library(kableExtra)
 

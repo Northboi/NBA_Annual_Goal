@@ -1,3 +1,11 @@
+#### Preamble ####
+# Purpose: Table 4 replication
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
+
+#### Workspace setup ####
 if(!require(broom)){install.packages('broom', dependencies = TRUE)}
 if(!require(knitr)){install.packages('knitr', dependencies = TRUE)}
 library(broom)

@@ -1,3 +1,11 @@
+#### Preamble ####
+# Purpose: Table 3 replication
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
+
+#### Workspace setup ####
 if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
 library(dplyr)
 

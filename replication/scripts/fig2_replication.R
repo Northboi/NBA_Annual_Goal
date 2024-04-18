@@ -1,3 +1,11 @@
+#### Preamble ####
+# Purpose: Figure 2 replication
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
+
+#### Workspace setup ####
 if(!require(ggplot2)){install.packages('ggplot2', dependencies = TRUE)}
 library(ggplot2)
 

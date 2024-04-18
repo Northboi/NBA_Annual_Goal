@@ -1,3 +1,12 @@
+#### Preamble ####
+# Purpose: Cleaning the nba dataset
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
+
+#### Workspace setup ####
+
 # Load the dplyr library
 if(!require(dplyr)){install.packages('dplyr', dependencies = TRUE)}
 library(dplyr)

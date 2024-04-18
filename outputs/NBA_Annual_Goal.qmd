@@ -1,8 +1,8 @@
 ---
-title: "The Impact of NBA Rule Changes and Improved Player Talents on Increased Goal Numbers in Games."
+title: "The Impact of NBA Rule Changes and Improved Player Talents on Increased Goal Numbers in Seasons."
 author: 
   - Shiji Zhang
-thanks: "Code and data are available at: https://github.com/Northboi/NBA_Annual_Goal ; The shiny app si available at: https://wrpn7n-who0asked.shinyapps.io/shiny_app/"
+thanks: "Code and data are available at: https://github.com/Northboi/NBA_Annual_Goal ; The shiny app si available at: https://wrpn7n-who0asked.shinyapps.io/shiny/"
 date: today
 date-format: long
 abstract: "As teams gradually adapt to the modifications in NBA game rules and the influx of talented players from around the world into the league, the total number of goals in each NBA season seems to be on the rise. In this report, we chose to study 16 seasons in NBA history with a total of 1229 or more games played. We used a Gaussian multiple linear regression model to examine the impact of field goal attempts, assists, and field goal percentage on the number of field goals. The study results indicate that increases in field goal attempts and assists have a greater impact on the increase in field goals compared to field goal percentage. This suggests that changes in game rules may bring more entertainment value to the game than the addition of more talented players to the NBA. NBA and other overseas leagues can focus on this conclusion to improve the entertainment value of their leagues and progress accordingly."
@@ -52,7 +52,7 @@ This report aims to analyze the reasons behind the recent increase in the total 
 # Data
 ## Backgrounds
 
-The dataset used in this report is sourced from a website called Basketball Reference, which is part of Sports Reference. Basketball Reference is an authoritative and professional statistical website that specializes in tracking all major sports. The dataset used in this report provides overall NBA league data from the 1946-47 season to the 2023-24 season. It is updated daily after the conclusion of NBA games. In the original dataset, there are a total of 78 observations and 32 variables, representing 78 seasons and 32 overall league data statistics.
+The dataset used in this report is sourced from a website called Basketball Reference, which is part of Sports Reference. Basketball Reference is an authoritative and professional statistical website that specializes in tracking all major sports. Their team compiles the statistical data provided by the NBA official after every NBA game to build a comprehensive NBA statistics website. The dataset used in this report provides overall NBA league data from the 1946-47 season to the 2023-24 season. It is updated daily after the conclusion of NBA games. In the original dataset, there are a total of 78 observations and 32 variables, representing 78 seasons and 32 overall league data statistics.
 
 After the data loading process, data cleaning was applied to the dataset. To ensure reliability and fairness of the results, this report only selected seasons with a game count greater than or equal to 1229 for analysis. Additionally, since this report aims to investigate the total number of goals per year in the NBA league after the rule change in the 2004-05 season, data prior to this season was not considered. Among the 20 seasons from 2004-05 to 2023-24, only 16 seasons met the requirements of this report. Four seasons were excluded: the 2011-12 season, the 2019-20 season, the 2020-21 season, and the ongoing 2023-24 season. These four seasons had insufficient game counts and significant discrepancies. The 2019-20 and 2020-21 seasons experienced a reduction in game count due to the pandemic. The ongoing 2023-24 season did not meet the desired game count as it is still in progress. The 2011-12 season was excluded due to labor issues related to player contracts, leading to a lengthy lockout lasting 149 days. Therefore, these four seasons will not be included in this report. After completing the data cleaning process, the cleaned dataset contains 16 observations and 5 variables, representing 16 seasons and 5 relevant overall league data statistics.
 
@@ -68,7 +68,7 @@ In the cleaned dataset, there are a total of five variables.
 - Assist: Named 'AST' in the original dataset. An integer variable representing the total number of assists generated in the entire NBA league during a specified season. An assist is counted when one player passes the ball to another player, resulting in a score.
 - Field Goal percentage: Named 'FG_percent' in the original dataset. A decimal variable representing the ratio between field goals and field goal attempts. A higher Field Goal percentage indicates a higher shooting accuracy in the entire league during a specified season.
 
-The (@tbl-one) shows the description for every variable.
+The (@tbl-one) shows the description for every variable.  
 
 ```{r}
 #| echo: false
@@ -153,7 +153,7 @@ kable(head_data_rename)
 However, the increasing number of assists alone may not entirely assure us that NBA games are speeding up. The (@fig-one) can dispel this concern. According to the bar chart shown in the (@fig-one), we can observe that not only does the red bar representing assists show an increasing trend over the past 16 seasons, but the blue bar representing total field goal attempts also exhibits a more pronounced upward trend. More assists and more field goal attempts indicate that the pace of NBA games has been accelerating over the past 16 seasons.
 
 In the 2004-05 season, the total number of assists in the entire league was around 52,000, while in the most recent concluded season, the 2022-23 season, the number of assists had increased to around 62,000, an increase of a whopping 10,000 assists. Additionally, in the 2004-05 season, the total field goal attempts in the entire league were only around 190,000, while in the 2022-23 season, this number had increased to around 210,000, an increase of approximately 20,000 attempts. It's worth reiterating that the total number of games and the duration of each game were the same for these two seasons. With the same number of games played, one season saw an increase of 10,000 assists and 20,000 field goal attempts compared to the other season. The changes in NBA offensive and defensive rules have indeed had a positive impact, accelerating the pace of the game.To better observe and compare the situations of Field goal, Field goal attempts, assists, and field goal percentage across different seasons, I created a Shiny app containing interactive tables and graphs to facilitate this.In this Shiny app, you can select one or more seasons to observe specific data. Here is the link to the Shiny app:
-[https://wrpn7n-who0asked.shinyapps.io/shiny_app/]
+[https://wrpn7n-who0asked.shinyapps.io/shiny/]
 
 ```{r}
 #| label: fig-one

@@ -1,4 +1,11 @@
+#### Preamble ####
+# Purpose: Testing the cleaned nba dataset
+# Author: Shiji Zhang
+# Date: 17 April 2024
+# Contact: kane.zhang@mail.utoronto.ca
+# License: MIT
 
+#### Workspace setup ####
 
 # Test for Season format: 'YYYY~YY'
 all(grepl("^\\d{4}~\\d{2}$", cleaned_nba_data$Season), na.rm = TRUE)
